@@ -1,0 +1,1 @@
+FABRICATED FIXTURE ONLY: batch e0 measures GPU 100 J, CPU 20 J, DRAM 5 J over 10 seconds.

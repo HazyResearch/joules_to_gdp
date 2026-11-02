@@ -1,0 +1,69 @@
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[project]
+name = "ipw"
+version = "0.1.0"
+description = "Intelligence Per Watt"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8",
+    "datasets>=2.20",
+    "grpcio>=1.62",
+    "huggingface-hub>=0.25",
+    "nvidia-ml-py>=12,<14",
+    "protobuf>=5",
+    "psutil>=5.9",
+    "python-dotenv>=1",
+    "requests>=2",
+    "rich>=13",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+openhands = ["openhands-sdk==1.11.5", "openhands-tools==1.11.5"]
+vllm = ["vllm>=0.11.0"]
+deliverables = [
+    "easyocr", "fpdf2", "imageio-ffmpeg", "mutagen", "openpyxl",
+    "pdf2image", "pdfplumber", "pypdf>=4.0", "Pillow", "psd-tools",
+    "pymupdf", "python-docx", "python-pptx", "pytesseract",
+    "reportlab", "scipy", "weasyprint",
+]
+pairwise = [
+    "anthropic", "google-genai", "httpx>=0.27", "imageio-ffmpeg",
+    "openpyxl", "pypdf>=4.0", "Pillow", "python-docx", "python-pptx",
+]
+analysis = ["numpy>=1.26", "pandas>=2.2", "scipy", "openpyxl"]
+dev = ["Pillow>=10", "httpx>=0.27", "pypdf>=4.0", "ruff>=0.4", "pytest>=8", "pytest-timeout>=2.3"]
+
+[project.scripts]
+ipw = "ipw.cli:main"
+
+[tool.uv_build]
+package-data = {"ipw" = ["py.typed"], "ipw.telemetry" = ["bin/**"]}
+
+[tool.pytest.ini_options]
+markers = [
+    "amd: tests requiring AMD GPU telemetry hardware",
+    "apple: tests requiring Apple telemetry hardware",
+    "integration: marks tests as integration tests (may require hardware and running server)",
+    "nvidia: tests requiring NVIDIA GPU telemetry hardware",
+    "auto_server: marks tests that use the auto-server functionality",
+    "submodel: marks tests that use multiple models/submodels",
+    "stress: marks the 20-way concurrency stress test (offline, opt-in; excluded from default runs)",
+]
+# Exclude the opt-in concurrency stress test from default runs. Invoke explicitly with -m stress.
+addopts = "-m 'not stress'"
+# pytest-timeout caps each test at 10 minutes for development installs.
+timeout = 600
+
+[tool.ruff]
+target-version = "py313"
+src = ["src", "src/ipw/tests"]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]

@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "description": "Joules to GDP input checksums. Public occupational sources are bundled; task and model inputs are supplied separately.",
+  "inputs": [
+    {
+      "path": "cluster/gdpval_occupation_repeat4_instances.json",
+      "target_path": "reproduction/inputs/gdpval_agent_occupation_repeat4_instances.json",
+      "sha256": "26a1c12f1fe82d51112b10c312375fbdaaf58d0e6479bc39313a4219778027a2",
+      "availability": "external; recorded 880-instance agent roster, not included in this repository"
+    },
+    {
+      "path": "GDPVal_220_Tasks/final_1-220_samples.json",
+      "sha256": "050c869501a125fe33e58cb5d2f3cc53ccde0d19f827e78043888d1519c7360e",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "gdpval_run_backups/g52_gdpval_repair_round2_20260715T2300Z/canonical/glm52_norubric_repaired_round2_canonical_traces.jsonl",
+      "sha256": "c5c32f0195dcce2b5683a2961d47d3fb60d9c765d215e83b7b2d76bef83088c2",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "occupation_data/data/input/OEWS.csv",
+      "sha256": "7deb4b5bd1e09d5a8637fd42b2b0278d593bc64e5b6913369d7349e9ecdd0899",
+      "bundled": true,
+      "availability": "bundled public BLS May 2024 OEWS source data"
+    },
+    {
+      "path": "occupation_data/data/input/ONET.csv",
+      "sha256": "65079bf4790d1d0597bd0864d8953d13f053ea11e33e90ca3d19092c6cc7f572",
+      "bundled": true,
+      "availability": "bundled public O*NET OnLine occupation-list export"
+    },
+    {
+      "path": "occupation_data/data/input/task_statements.csv",
+      "sha256": "6b4f3c40bf47332507c74f000d474fff8d6f0ae6df9ff83bf44303cd14bf4b2c",
+      "bundled": true,
+      "availability": "bundled public O*NET task-statement source data"
+    },
+    {
+      "path": "outputs/019f86a0-e5e6-7e90-8578-b08ddb4385fb/glm52_gdpval_batch_ledger.csv",
+      "sha256": "7d99f9bbc72c40c9e389524a158cc179aae13a1a40f55710cf6f05f9cd0c31f7",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "outputs/019f86a0-e5e6-7e90-8578-b08ddb4385fb/glm52_no_rubric_query_ledger.csv",
+      "sha256": "53fc7bc76a5682d0646394c51e35425057b24c62c18bbe8803f274e309d1bea4",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "outputs/019f9187-6eaf-7643-b1d4-931e16f4d844/qwen36_27b_gdpval_major_category_value_energy.xlsx",
+      "sha256": "00487006e8ae5ea9e6f84943968280114336bd726b843e26b86e4c1dc406b617",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "outputs/019fde63-1f71-7461-a23f-2f017c2c95cd/qwen36_b200_gdp_structured_value_energy_20260815/inputs",
+      "kind": "directory",
+      "sha256": "36acea003dd6db913b55224c2bb4079d61155b519b83eb12f82a06049adbba82",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "outputs/019fde63-1f71-7461-a23f-2f017c2c95cd/qwen36_h200_paper_five_metrics_20260815/inputs",
+      "kind": "directory",
+      "sha256": "7fd4710bad846d1d6cb93833b6fa12c50d1f4ac9e11df295c9af8eff1e1fa84a",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "outputs/amd_qwen_mi350x_paper_five_metrics_20260815/inputs",
+      "kind": "directory",
+      "sha256": "2af28392a8e3c4d4bbb3ffba371964ea43b06d098cf934acc53bd943682955a3",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/energy_vs_cost_latency_20260922/one_h100_all_attempts.csv",
+      "sha256": "c8a0288053e95e73dff8d988cbb75ea71a7ddd3ac837fb62c066db87ecc341f0",
+      "availability": "external fallback for H100 pass@1; not included in this repository",
+      "required": false
+    },
+    {
+      "path": "reports/gdpval_pairwise_claude_haiku45_20260716/comparison_manifest.unblinded.jsonl",
+      "sha256": "532e98f9f65ede097f468369690cf219461a38ec7961c315882270afab89f7ca",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_claude_haiku45_20260716/headline_results.csv",
+      "sha256": "47027b4b4aa6b093fda5a3c5aa6fe96bb4c976b9c6ea4cd8dadec52f9e123a85",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_claude_haiku45_20260716/judgments.raw.unblinded.jsonl",
+      "sha256": "70aecc8d306ed43e1821e18d3f81ac25d5e2ce345243f4c87cb0831b999b8ff0",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_claude_haiku45_20260716/results.output_level.jsonl",
+      "sha256": "9b45955a8b7f3e7f725c640234556e73e99f5d23ec9694d8503b3924655af940",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_claude_haiku45_20260716/results.task_level.jsonl",
+      "sha256": "96d7585bdbaedcaf18eff3ef675b1b11eae90ee7824a1b268ebbc1446a3c0bbd",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/comparison_manifest.unblinded.jsonl",
+      "sha256": "532e98f9f65ede097f468369690cf219461a38ec7961c315882270afab89f7ca",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/evidence_index.json",
+      "sha256": "5a31d100de3c2ed797a5062a2478b149ff181742258e8d2ce6e5e257b42d0297",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/frozen_input_audit.json",
+      "sha256": "1ed2693cb0e488e838352561c23e71552eb28c9241129edd15091e52014295e0",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/headline_results.csv",
+      "sha256": "a942b3cc890ec4d3e3c5704d02e9efda28720b57b1d9bb15a578e6a864365b17",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/judgments.raw.unblinded.jsonl",
+      "sha256": "0f478895d6faa504a0c285d42be67fdbf383f40f9059acfaa2da1ff3656c7512",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/provider_jobs.json",
+      "sha256": "1c6795c00049b09c45c962c5c90b612b9dfda8dd271cc795502e4cc89ca57555",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/provider_run_summary.json",
+      "sha256": "adef7aa1b74be02d9c3fb027adeac22327184245245903aa1ef041b410f5f697",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/result_parse_summary.json",
+      "sha256": "d66227503c2ffa2e4030e859b0320ef498d31e066e8f138aedd2da00b45410a2",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/results.output_level.jsonl",
+      "sha256": "81433de2cab2e9912d7f83830bb6a831f31a400c68993be690677138c0ac5435",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_gemini31_flash_lite_20260716/results.task_level.jsonl",
+      "sha256": "33545072e76bc479a4426805b9880a338e95f488a917085c510ea5147d059a26",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/batch_jobs.json",
+      "sha256": "27c18798a7a2ebefb8a98d518114afab7409820656cfe46bd69c311e5307d2af",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/comparison_manifest.unblinded.jsonl",
+      "sha256": "532e98f9f65ede097f468369690cf219461a38ec7961c315882270afab89f7ca",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/crosswalk.json",
+      "sha256": "b04e200aab9c0c57df64999732befb2434e4593c087519655a5812142cd6bfa2",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/evidence",
+      "kind": "directory",
+      "sha256": "0938220741ca7529af00b20aaa33949add84a11bf2deef73b2e26d0d13cf929e",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/headline_results.csv",
+      "sha256": "ab6bdfc4467146305c1e26e0ac64aafdd8292a67953330977be788799cd6493d",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/judgments.raw.unblinded.jsonl",
+      "sha256": "c2ac58c3cd7e3d5e703c8a73ca0756b554e2986b2b90a906d6f3ce3b66d0ee0c",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/results.output_level.jsonl",
+      "sha256": "c2ac58c3cd7e3d5e703c8a73ca0756b554e2986b2b90a906d6f3ce3b66d0ee0c",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gdpval_pairwise_glm52_20260715/results.task_level.jsonl",
+      "sha256": "9615185100b791ad71336ec84a51b56ace62ee5b5ceb6d954dc0ed0cadc6a243",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_gemini31_flash_lite_20260725/evidence_index.json",
+      "sha256": "d15299fa927dcfe695ff1d7740abd4160508e3a7cfe1fad612f5399efb317e89",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_gemini31_flash_lite_20260725/results.output_level.jsonl",
+      "sha256": "f3389bb33a4b73a693891477e99e6593299c2efdc623780804423e3f62a50bd6",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_major_category_value_energy_20260725/gemma_value_energy_report.json",
+      "sha256": "78c66fe3f8f0628a6d9070298117b3cd66adfbdd85c339880293d9cfb7a491fb",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_major_category_value_energy_20260725/source_telemetry/rows-000-459/batches.jsonl",
+      "sha256": "20873f5257c4f52c128fdd9ee505c5b0a794ecd3df1f2e90b5ac7d7dd2be4765",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_major_category_value_energy_20260725/source_telemetry/rows-460-879/batches.jsonl",
+      "sha256": "3f08073729ae5744e8f642703d36450efc5d08d9e21a1d00eaf85b7852cd0040",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/comparison_manifest.unblinded.jsonl",
+      "sha256": "7c8a019c1ba63954e5a0dc1561b14ce20362c6e5aa61cffd6464d4ad443ed6c7",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/crosswalk.json",
+      "sha256": "b04e200aab9c0c57df64999732befb2434e4593c087519655a5812142cd6bfa2",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/evidence",
+      "kind": "directory",
+      "sha256": "9067a5d0e06553aad22c9878ad4c90500cad51841a86fe9d0ed92919f92c87a1",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/frozen_source_inventory.json",
+      "sha256": "6e853e8ac502cf7b0e932d867185c462758d18ae8171f65b195c32e450ca0dfd",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/gemma_source_outputs.json",
+      "sha256": "2d6c9557897e2d4db7f48254b51c9fe9bd0d92fc4b60ea22cdc7d1225804f7c2",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/source",
+      "kind": "directory",
+      "sha256": "1f34673669b7c533c2c630c2ff067e11cbc6592c35293b2d0e7dcbb4227bc8bf",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gemma4_31b_norubric_source_20260725/source_stage_summary.json",
+      "sha256": "7df2d9f27df6a63137abeecf63f97e9f97c8a278a0bdffda1b55db62ef5cd725",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/glm52_modal_rental_20260919/remote_run_resource_evidence.json",
+      "sha256": "296d242eb59b75c978d24cfc7f0e69ae4712a4aa2280f8cbf4face2800ccab55",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/glm52_modal_rental_20260919/sources",
+      "kind": "directory",
+      "sha256": "f2ad6259b0c5160e75c4be71cb1fd0bf92ec1b85a68ad2f307ee74e39687a3fc",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/glm52_norubric_gdp_structured_value_capture_20260724.json",
+      "sha256": "19a9649ec0418cef90a77dd8644e2a49a182d4dfa387770ac689741b308e352a",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/glm52_reference_rental_20260919/sources",
+      "kind": "directory",
+      "sha256": "cd80f1930d1fc77c3914749b263c8686fad2a72dd2cd32db183804783d2a92fc",
+      "availability": "external archived AWS price snapshots"
+    },
+    {
+      "path": "reports/gpt_oss_120b_20b_major_category_value_energy_20260724.json",
+      "sha256": "dde80d042661eecc3cb99d0f7d2023dcddcf85f4225964db359ae96d5767a4cc",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_gemini31_flash_lite_20260724/evidence_index.json",
+      "sha256": "f2e0f3865ecbb89283586d6239aad1c587a225213f311bf5659570608ae32586",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_gemini31_flash_lite_20260724/results.output_level.jsonl",
+      "sha256": "f1501074c1e26bbe7014ac6853772218d4d936394a1d089ce6dcbe1886fe810b",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/comparison_manifest.unblinded.jsonl",
+      "sha256": "aa5cf075eb1c1fedfc67e811a7a603a6e14ea1117376a0d03a801d188bbd97f7",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/crosswalk.json",
+      "sha256": "b04e200aab9c0c57df64999732befb2434e4593c087519655a5812142cd6bfa2",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/evidence",
+      "kind": "directory",
+      "sha256": "1134dfab02eaf5f0b4dc8e0b80959087354e914836b70d21f0a763162fd48f3f",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/frozen_source_inventory.json",
+      "sha256": "5835fb2fce01e2beb74b7fa6efc52b426d1a41e72f34a082089d90dc2a0443da",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/gptoss_source_outputs.json",
+      "sha256": "26360519cec22b7bd520dc065d6d7b1b8386feb0dd3d1f4b9174198f524d1f97",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/source",
+      "kind": "directory",
+      "sha256": "8aaa9473d687437348adcc72ec66bba246cee89c04da69c7b2507b08332c8f68",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_120b_norubric_source_20260724/source_stage_summary.json",
+      "sha256": "51c825c23ad4c9a2340dea9ee3f52b39ad6bc9572494a91946c3dcc1959a9b5c",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_gemini31_flash_lite_20260724/evidence_index.json",
+      "sha256": "b859cc1fc53824bb6d2a0904723ec9e034ad9214ee6abe76c752d2e0a48245b0",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_gemini31_flash_lite_20260724/results.output_level.jsonl",
+      "sha256": "60b48fdba4978bea0ab851aa83a1e7512a4cc5a19364fb955ede688420e690b6",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/comparison_manifest.unblinded.jsonl",
+      "sha256": "0d3ed9a6511add92645f093e99dec0c6e48fe0c9d9a50d03490e6ce3d3fb3b65",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/crosswalk.json",
+      "sha256": "b04e200aab9c0c57df64999732befb2434e4593c087519655a5812142cd6bfa2",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/evidence",
+      "kind": "directory",
+      "sha256": "d733a3fd3edf6905947cead722c1ce1ff3442023815359c0f602c20c85e7dc21",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/frozen_source_inventory.json",
+      "sha256": "00b27669f88818e4de88d94ee42e2389dadb5b77c96f381c83cc6272a3c5c43e",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/gptoss_source_outputs.json",
+      "sha256": "cd8256327e771af10df670fd27dc50f4470c954b288566a3cafe5915f0e620a2",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/source",
+      "kind": "directory",
+      "sha256": "16b2ba437090402bdd7e02c7bf5c8cf8627e13c68f06aebf7236e68df4a2a24b",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/gpt_oss_20b_norubric_source_20260724/source_stage_summary.json",
+      "sha256": "4ec239d29b5f3e36cd00fa0c14ef5a1c090bdced8f2a6fe08059109292e31809",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/paper_net_metrics_20260919/aws_july_2026_hardware_prices.json",
+      "sha256": "d2a46a09b270854b06154db2d0fac27f219fee001dbdee15facfb1e852f73e1f",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/paper_net_metrics_20260919/hardware_cost_ledgers.csv",
+      "target_path": "reproduction/inputs/hardware_cost_ledgers.csv",
+      "sha256": "081bfe83eb40c5f133c052c8ead829e5504ad965cf1ba8c49e5bb211192f0d00",
+      "availability": "external optional input for hardware-cost calculations",
+      "required": false
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_amd_mi350x_gemini31_flash_lite_20260815",
+      "kind": "directory",
+      "sha256": "dd8dc1fd4f87717dbc4a1706a697145e74b9299f014300d0ee61a6700827bd55",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_amd_mi350x_gemini31_flash_lite_20260815/results.output_level.jsonl",
+      "sha256": "372b8c9988c12a9aa7d29edf5b57fd8fa795fb49df0da4d778f71a38865275a7",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_amd_mi350x_source_20260815",
+      "kind": "directory",
+      "sha256": "e2e43e5bc721002adbbb4cd46cbf2eaec633c1786f9de250946777d68013f3e5",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_gemini31_flash_lite_20260723/evidence_index.json",
+      "sha256": "df7e0bb3f9affc5592e9bcd8f3d64f9a6ae32d746acd34b53ef36be7a412032a",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_gemini31_flash_lite_20260723/results.output_level.jsonl",
+      "sha256": "224dc99a39e814eaddc12e70eb2a2c72f8f241868ba9573b1411287dec61f325",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/comparison_manifest.unblinded.jsonl",
+      "sha256": "a08a1d559542b45efc47d23801b4a6ad8ef56651fb285031413392aa86be5483",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/crosswalk.json",
+      "sha256": "b04e200aab9c0c57df64999732befb2434e4593c087519655a5812142cd6bfa2",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/evidence",
+      "kind": "directory",
+      "sha256": "4a6a37eaf2fd0279ba8e674bb3cc3c804e026181151d3bc53f6a44f151582a60",
+      "required": false,
+      "availability": "external optional audit input; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/frozen_source_inventory.json",
+      "sha256": "9d9c354aa883e043e9bf8cec8e2071c27a96ac3538e38186f5f311f465b0fb5a",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/qwen_source_outputs.json",
+      "sha256": "af95ea61ae3802f0d401863432d0cde71e739d01d3f1ba4d60c98086e987bb63",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/source",
+      "kind": "directory",
+      "sha256": "79d5ca91dbb80eaf7a0ddeb8c675a21513494a83b551ceaefcab0137a720f434",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reports/qwen36_27b_norubric_source_20260723/source_stage_summary.json",
+      "sha256": "c8398e95d1ec5620da995ae3699af7297ae35a35c91eb437adc2a386d73f008d",
+      "availability": "external; not included in this repository"
+    },
+    {
+      "path": "reproduction/inputs/energy_component_batches.csv",
+      "sha256": null,
+      "required": false,
+      "availability": "external measurement input for GPU+CPU+DRAM analysis; supply a SHA-256 in the local manifest before staging"
+    },
+    {
+      "path": "reproduction/inputs/energy_component_requests.csv",
+      "sha256": null,
+      "required": false,
+      "availability": "external measurement input for GPU+CPU+DRAM analysis; supply a SHA-256 in the local manifest before staging"
+    },
+    {
+      "path": "reproduction/inputs/gptoss/batches/gpt-oss-120b-high-no-rubric/run/batches.jsonl",
+      "sha256": null,
+      "required": false,
+      "availability": "external optional GPT-OSS input; record its checksum in the completed local manifest"
+    },
+    {
+      "path": "reproduction/inputs/gptoss/batches/gpt-oss-20b-high-no-rubric/run/batches.jsonl",
+      "sha256": null,
+      "required": false,
+      "availability": "external optional GPT-OSS input; record its checksum in the completed local manifest"
+    },
+    {
+      "path": "reproduction/inputs/gptoss/telemetry/gpt-oss-120b-high-no-rubric/reports/final/telemetry_audit.json",
+      "sha256": null,
+      "required": false,
+      "availability": "external optional GPT-OSS input; record its checksum in the completed local manifest"
+    },
+    {
+      "path": "reproduction/inputs/gptoss/telemetry/gpt-oss-20b-high-no-rubric/reports/final_corrected/telemetry_audit.json",
+      "sha256": null,
+      "required": false,
+      "availability": "external optional GPT-OSS input; record its checksum in the completed local manifest"
+    }
+  ],
+  "directory_hash_algorithm": "sha256 of UTF-8 path NUL decimal byte length NUL file SHA-256 LF, sorted by UTF-8 relative path; empty directories ignored; internal symlinks rejected"
+}

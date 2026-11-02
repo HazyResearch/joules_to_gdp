@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="336" viewBox="0 0 1200 336" role="img" aria-labelledby="title description">
+  <title id="title">Joules to GDP workflow</title>
+  <desc id="description">Run AI tasks while measuring batch GPU, CPU and memory energy. Compare outputs with expert references, then use judged outcomes, expert completion time and median hourly wages to assign task value. Combine value with measured energy, AI-system execution cost and completion time to calculate Net Value per Joule (NVJ) and Time Saving per Joule (TSJ).</desc>
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #233440; }
+      .heading { font-size: 22px; font-weight: 600; letter-spacing: -.3px; }
+      .detail { font-size: 18px; fill: #637581; }
+      .canvas { fill: #f5f8fa; stroke: #e0e7ec; }
+      .box { fill: #fff; stroke: #cdd8df; stroke-width: 1.2; }
+      .accent-box { fill: #eaf4f2; stroke: #91bcb5; stroke-width: 1.2; }
+      .accent-heading { fill: #235e56; }
+      .line { fill: none; stroke: #8295a3; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .energy-line { stroke: #639b91; }
+      .arrow { fill: #8295a3; }
+      .energy-arrow { fill: #639b91; }
+      @media (prefers-color-scheme: dark) {
+        text { fill: #edf3f7; }
+        .detail { fill: #a9bac8; }
+        .canvas { fill: #101b26; stroke: #293b4a; }
+        .box { fill: #192936; stroke: #354d5f; }
+        .accent-box { fill: #173638; stroke: #416f6c; }
+        .accent-heading { fill: #c2e9e1; }
+        .line { stroke: #718b9e; }
+        .energy-line { stroke: #73b4a7; }
+        .arrow { fill: #718b9e; }
+        .energy-arrow { fill: #73b4a7; }
+      }
+    </style>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M1 1 7 4 1 7Z" class="arrow"/>
+    </marker>
+    <marker id="energy-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M1 1 7 4 1 7Z" class="energy-arrow"/>
+    </marker>
+  </defs>
+  <rect x=".6" y=".6" width="1198.8" height="334.8" rx="18" class="canvas"/>
+
+  <path d="M129 174V85Q129 73 141 73H430" class="line energy-line" marker-end="url(#energy-arrow)"/>
+  <path d="M770 73H1003Q1015 73 1015 85V174" class="line energy-line" marker-end="url(#energy-arrow)"/>
+  <rect x="430" y="30" width="340" height="86" rx="12" class="accent-box"/>
+  <text x="600" y="67" text-anchor="middle" class="heading accent-heading">Batch energy</text>
+  <text x="600" y="94" text-anchor="middle" class="detail">GPU, CPU and memory</text>
+
+  <path d="M226 239H285" class="line" marker-end="url(#arrow)"/>
+  <path d="M515 239H574" class="line" marker-end="url(#arrow)"/>
+  <path d="M804 239H863" class="line" marker-end="url(#arrow)"/>
+  <rect x="32" y="174" width="194" height="130" rx="12" class="box"/>
+  <text x="129" y="225" text-anchor="middle" class="heading">Run tasks</text>
+  <text x="129" y="255" text-anchor="middle" class="detail">Model and agent</text>
+
+  <rect x="285" y="174" width="230" height="130" rx="12" class="box"/>
+  <text x="400" y="225" text-anchor="middle" class="heading">Compare outputs</text>
+  <text x="400" y="255" text-anchor="middle" class="detail">Expert references</text>
+
+  <rect x="574" y="174" width="230" height="130" rx="12" class="box"/>
+  <text x="689" y="225" text-anchor="middle" class="heading">Task value</text>
+  <text x="689" y="255" text-anchor="middle" class="detail">Expert time × wages</text>
+
+  <rect x="863" y="174" width="305" height="130" rx="12" class="accent-box"/>
+  <text x="1015" y="211" text-anchor="middle" font-size="19" font-weight="600" class="accent-heading">Net Value per Joule (NVJ)</text>
+  <text x="1015" y="242" text-anchor="middle" font-size="19" font-weight="600" class="accent-heading">Time Saving per Joule (TSJ)</text>
+  <text x="1015" y="276" text-anchor="middle" class="detail">Uses run time and cost</text>
+</svg>

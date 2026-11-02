@@ -1,0 +1,141 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.env.local
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Rust
+target/
+Cargo.lock
+!/energy-monitor/Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor backups
+*.swp
+*.swo
+*.bak
+*.tmp
+
+.pytest_cache/
+.ruff_cache/
+.cache/
+.coverage*
+coverage.xml
+htmlcov/
+.env.*
+
+runs/
+/runs
+chip_results/
+
+# Accidental shell-output paths
+/"$ROOT/
+/1[{]print
+
+# AI tooling
+CLAUDE.md
+.claude/
+
+# MkDocs
+site/
+
+# Local reproduction inputs, generated outputs, and compiled telemetry
+/reproduction/inputs/
+/reproduction/generated/
+/intelligence-per-watt/src/ipw/telemetry/bin/*/energy-monitor
+/intelligence-per-watt/src/ipw/telemetry/bin/*/energy-monitor.exe
+
+# External inputs and generated outputs stay local.
+/.codex_tmp_*/
+/GDPVal_220_Tasks/
+/Snorkel Dataset/
+/Snorkel_50_Tasks/
+/Snorkel_GDPval/
+/analysis_reports/
+/gdpval_run_backups/
+/occupation_data/data/output/
+/output/
+/outputs/
+/paper/
+/remote_backups/
+/reports/
+/tmp/
+/*.csv
+/*.jsonl
+/*.pdf
+/*.png

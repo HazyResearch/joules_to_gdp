@@ -1,0 +1,3 @@
+profile,batch_key,physical_request_id,task_id,repeat,start_s,end_s
+fixture,e0,r0,fabricated-task-1,0,0,10
+fixture,e0,r1,fabricated-task-2,0,5,10

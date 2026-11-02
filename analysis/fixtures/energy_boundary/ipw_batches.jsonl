@@ -1,0 +1,1 @@
+{"batch_id":"e0","batch_index":0,"query_ids":["q0","q1"],"batch_prompt_start_time_s":0.0,"batch_prompt_end_time_s":10.0,"batch_gpu_energy_joules":100.0,"batch_cpu_energy_joules":20.0,"batch_dram_energy_joules":5.0}

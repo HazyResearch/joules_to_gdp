@@ -1,0 +1,44 @@
+{
+  "protocol": {
+    "dataset": "gdpval",
+    "agent": "openhands",
+    "serve_backend": "vllm",
+    "concurrency": 20,
+    "context_tokens": 131072,
+    "output_tokens": 32768,
+    "telemetry_interval_seconds": 0.2,
+    "dataset_revision": "11e7900cdcac61bc4daf59e65feb238acda98fbf",
+    "operational_judge_model": "gemini-3.5-flash",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20260726
+  },
+  "deployments": {
+    "glm52_h200_8": {
+      "model": "zai-org/GLM-5.2-FP8", "analysis_profile": "glm52_h200",
+      "accelerator": "H200", "gpu_count": 8, "tensor_parallel": 8,
+      "agent_max_turns": 160, "server_max_num_seqs": 2,
+      "query_timeout_seconds": 14400, "telemetry_buffer_seconds": 14700,
+      "operational_judge": {"client": "openai", "model": "gpt-5.4-mini"},
+      "ipw_environment": {
+        "IPW_OPENHANDS_LLM_TIMEOUT": "2400",
+        "IPW_OPENHANDS_REASONING_EFFORT": "high",
+        "IPW_OPENHANDS_LITELLM_EXTRA_BODY_JSON": "{\"chat_template_kwargs\":{\"reasoning_effort\":\"high\"}}",
+        "IPW_OPENHANDS_TEXT_TOOL_CALL_PARSER": "glm",
+        "IPW_OPENHANDS_FINAL_NUDGE_MODE": "skip",
+        "IPW_GDPVAL_REPAIR_ATTEMPTS": "12",
+        "IPW_GDPVAL_FINAL_CHECK_ATTEMPTS": "5",
+        "IPW_GDPVAL_FINAL_CHECK_MAX_TURNS": "80",
+        "IPW_GDPVAL_FILE_SETTLE_SECONDS": "120",
+        "IPW_GDPVAL_DELIVERABLE_RESCUE_INSTRUCTIONS": "Generic GDPval deliverable discipline for every task: create real final deliverable files in the current working directory, not only notes, scripts, screenshots, copied inputs, or analysis. Prefer requested filenames, but case, spacing, or similarly descriptive filename variants with the correct extension are acceptable when the content is right. Verify final artifacts with structured tools before finishing: reopen spreadsheets/documents/decks/PDFs with the relevant Python library or metadata tool, and use ffprobe for audio/video. Finish with relative path(s) to the final deliverable file(s). Use only the task prompt and reference files; follow the stated task requirements."
+      }
+    },
+    "qwen36_h100_8": {"model": "Qwen/Qwen3.6-27B", "analysis_profile": "qwen36_27b", "model_revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9", "accelerator": "H100", "gpu_count": 8, "tensor_parallel": 8},
+    "gemma4_h100_8": {"model": "google/gemma-4-31B-it", "analysis_profile": "gemma4_31b", "accelerator": "H100", "gpu_count": 8, "tensor_parallel": 8},
+    "gptoss120_h100_8": {"model": "openai/gpt-oss-120b", "analysis_profile": "gpt_oss_120b", "accelerator": "H100", "gpu_count": 8, "tensor_parallel": 8},
+    "gptoss20_h100_8": {"model": "openai/gpt-oss-20b", "analysis_profile": "gpt_oss_20b", "accelerator": "H100", "gpu_count": 8, "tensor_parallel": 8},
+    "qwen36_b200_1": {"model": "Qwen/Qwen3.6-27B", "analysis_profile": "qwen_b200", "model_revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9", "accelerator": "B200", "gpu_count": 1, "tensor_parallel": 1},
+    "qwen36_h200_1": {"model": "Qwen/Qwen3.6-27B", "analysis_profile": "qwen_h200", "model_revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9", "accelerator": "H200", "gpu_count": 1, "tensor_parallel": 1},
+    "qwen36_h100_1": {"model": "Qwen/Qwen3.6-27B", "analysis_profile": "qwen_h100", "model_revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9", "accelerator": "H100", "gpu_count": 1, "tensor_parallel": 1},
+    "qwen36_mi350x_1": {"model": "Qwen/Qwen3.6-27B", "analysis_profile": "qwen_mi350x", "model_revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9", "accelerator": "MI350X", "gpu_count": 1, "tensor_parallel": 1}
+  }
+}

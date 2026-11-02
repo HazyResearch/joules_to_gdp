@@ -1,0 +1,16 @@
+{
+  "profiles": [
+    {
+      "profile": "fixture",
+      "source_mode": "historical-archive",
+      "expected_batch_size": 2,
+      "sources": [
+        {
+          "batches": "analysis/fixtures/energy_boundary/ipw_batches.jsonl",
+          "traces": "analysis/fixtures/energy_boundary/ipw_traces.jsonl",
+          "batch_key_prefix": ""
+        }
+      ]
+    }
+  ]
+}

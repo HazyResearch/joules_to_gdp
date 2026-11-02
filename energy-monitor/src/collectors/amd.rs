@@ -1,0 +1,355 @@
+#![cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+
+use anyhow::Result;
+use async_trait::async_trait;
+use rocm_smi_lib::{RocmSmi, RocmSmiDevice, RsmiTemperatureMetric, RsmiTemperatureType};
+use std::sync::{Arc, Mutex};
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use tracing::{info, warn};
+
+use super::{CollectorSample, TelemetryCollector};
+use crate::energy::GpuInfo;
+
+const MICROWATTS_PER_WATT: f64 = 1_000_000.0;
+const BYTES_PER_MIB: f64 = 1024.0 * 1024.0;
+
+/// AMD telemetry collector using ROC-SMI
+pub struct AmdCollector {
+    rsmi: Arc<Mutex<Option<RocmSmi>>>,
+    devices: Arc<Mutex<Vec<(u32, RocmSmiDevice)>>>,
+    last_timestamp: Arc<Mutex<Option<Instant>>>,
+    accumulated_energy_j: Arc<Mutex<f64>>,
+    gpu_info: Arc<Mutex<GpuInfo>>,
+    #[cfg(target_os = "linux")]
+    rapl_reader: Mutex<Option<super::linux_rapl::RaplReader>>,
+}
+
+impl AmdCollector {
+    pub fn new(_config: Arc<crate::config::Config>) -> Result<Self> {
+        let mut rsmi =
+            RocmSmi::init().map_err(|e| anyhow::anyhow!("Failed to init ROC-SMI: {:?}", e))?;
+
+        let count = rsmi.get_device_count();
+        if count == 0 {
+            return Err(anyhow::anyhow!("No AMD GPUs found"));
+        }
+
+        let selected = selected_device_indices(count)?;
+        if let Some(expected) = super::expected_gpu_count()? {
+            if selected.len() != expected {
+                return Err(anyhow::anyhow!(
+                    "AMD meter selected {} GPUs, expected {expected}",
+                    selected.len()
+                ));
+            }
+        }
+        let mut devices: Vec<(u32, RocmSmiDevice)> = Vec::new();
+        for i in selected {
+            let dev = RocmSmiDevice::new(i)
+                .map_err(|err| anyhow::anyhow!("AMD meter cannot open GPU {i}: {err:?}"))?;
+            devices.push((i, dev));
+        }
+        if devices.is_empty() {
+            return Err(anyhow::anyhow!("No AMD GPUs found"));
+        }
+
+        let mut names: Vec<String> = Vec::with_capacity(devices.len());
+        for (_, d) in devices.iter_mut() {
+            let name = match d.get_identifiers() {
+                Ok(id) => id.name.unwrap_or_else(|_| "Unknown GPU".to_string()),
+                Err(_) => "Unknown GPU".to_string(),
+            };
+            names.push(name);
+        }
+        let aggregated_name = if names.iter().all(|n| *n == names[0]) {
+            format!("{} x{}", names[0], devices.len())
+        } else {
+            format!("AMD ({} GPUs)", devices.len())
+        };
+        let gpu_info = GpuInfo {
+            name: aggregated_name,
+            vendor: "AMD".into(),
+            device_id: 0,
+            device_type: "GPU".into(),
+            backend: "AMDSMI".into(),
+        };
+
+        info!("AMD GPUs detected for energy monitoring: {}", gpu_info.name);
+
+        // Initialize RAPL reader for CPU energy on Linux
+        #[cfg(target_os = "linux")]
+        let rapl_reader = {
+            let reader = super::linux_rapl::RaplReader::new();
+            if reader.is_some() {
+                info!("RAPL reader initialized for CPU energy monitoring");
+            }
+            Mutex::new(reader)
+        };
+
+        Ok(Self {
+            rsmi: Arc::new(Mutex::new(Some(rsmi))),
+            devices: Arc::new(Mutex::new(devices)),
+            last_timestamp: Arc::new(Mutex::new(None)),
+            accumulated_energy_j: Arc::new(Mutex::new(0.0)),
+            gpu_info: Arc::new(Mutex::new(gpu_info)),
+            #[cfg(target_os = "linux")]
+            rapl_reader,
+        })
+    }
+}
+
+fn selected_device_indices(count: u32) -> Result<Vec<u32>> {
+    let visible: Vec<_> = [
+        "ROCR_VISIBLE_DEVICES",
+        "HIP_VISIBLE_DEVICES",
+        "GPU_DEVICE_ORDINAL",
+    ]
+    .iter()
+    .filter_map(|name| std::env::var(name).ok().map(|value| (*name, value)))
+    .collect();
+    select_from_visibility(count, &visible)
+}
+
+fn select_from_visibility(count: u32, visible: &[(&str, String)]) -> Result<Vec<u32>> {
+    let Some((name, raw)) = visible.first() else {
+        return Ok((0..count).collect());
+    };
+    if visible.iter().any(|(_, value)| value != raw) {
+        return Err(anyhow::anyhow!(
+            "Conflicting ROCm GPU visibility variables; physical meter mapping is ambiguous"
+        ));
+    }
+    parse_visible_device_indices(&raw, count)
+        .map_err(|err| anyhow::anyhow!("Invalid {name} for AMD meter: {err}"))
+}
+
+fn parse_visible_device_indices(raw: &str, count: u32) -> Result<Vec<u32>> {
+    if raw.eq_ignore_ascii_case("all") {
+        return Ok((0..count).collect());
+    }
+    let mut indices = Vec::new();
+    for token in raw.split(',') {
+        let index = token
+            .trim()
+            .parse::<u32>()
+            .map_err(|_| anyhow::anyhow!("GPU ids must be comma-separated numeric indices"))?;
+        if indices.contains(&index) {
+            return Err(anyhow::anyhow!("duplicate GPU index {index}"));
+        }
+        indices.push(index);
+    }
+    if indices.is_empty() || indices.len() > count as usize {
+        return Err(anyhow::anyhow!("no usable GPU selection"));
+    }
+    if indices.iter().all(|index| *index < count) {
+        return Ok(indices);
+    }
+    // Some containers expose only the selected GPUs to ROC-SMI while retaining
+    // host indices in the visibility variable. Remap only when the device
+    // count exactly equals the selection size; otherwise identity is ambiguous.
+    if indices.iter().all(|index| *index >= count) && indices.len() == count as usize {
+        return Ok((0..count).collect());
+    }
+    Err(anyhow::anyhow!(
+        "GPU selection cannot be mapped to ROC-SMI devices"
+    ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{parse_visible_device_indices, select_from_visibility};
+
+    #[test]
+    fn selects_only_requested_amd_device() {
+        assert_eq!(parse_visible_device_indices("2", 4).unwrap(), vec![2]);
+    }
+
+    #[test]
+    fn only_remaps_when_rocm_exposes_exactly_the_selected_devices() {
+        assert_eq!(parse_visible_device_indices("4", 1).unwrap(), vec![0]);
+        assert!(parse_visible_device_indices("4", 8).is_ok());
+        assert!(parse_visible_device_indices("9", 8).is_err());
+        assert!(parse_visible_device_indices("0,9", 2).is_err());
+    }
+
+    #[test]
+    fn conflicting_visibility_variables_are_rejected() {
+        let visible = [
+            ("ROCR_VISIBLE_DEVICES", String::from("4")),
+            ("HIP_VISIBLE_DEVICES", String::from("0")),
+        ];
+        assert!(select_from_visibility(8, &visible).is_err());
+    }
+}
+
+#[async_trait]
+impl TelemetryCollector for AmdCollector {
+    fn platform_name(&self) -> &str {
+        "amd"
+    }
+
+    async fn is_available(&self) -> bool {
+        self.devices.lock().unwrap().len() > 0
+    }
+
+    async fn collect(&self) -> Result<CollectorSample> {
+        let mut sample = CollectorSample {
+            power_watts: -1.0,
+            energy_joules: -1.0,
+            temperature_celsius: -1.0,
+            gpu_memory_usage_mb: -1.0,
+            gpu_memory_total_mb: -1.0,
+            cpu_memory_usage_mb: -1.0,
+            cpu_power_watts: -1.0,
+            cpu_energy_joules: -1.0,
+            dram_power_watts: -1.0,
+            dram_energy_joules: -1.0,
+            ane_power_watts: -1.0,
+            ane_energy_joules: -1.0,
+            gpu_compute_utilization_pct: -1.0,
+            gpu_memory_bandwidth_utilization_pct: -1.0,
+            gpu_tensor_core_utilization_pct: -1.0,
+            platform: "amd".to_string(),
+            timestamp_nanos: SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos() as i64,
+            gpu_info: Some(self.gpu_info.lock().unwrap().clone()),
+        };
+
+        let mut power_sum_w: f64 = 0.0;
+        let mut power_count = 0;
+        let mut temp_sum_c: f64 = 0.0;
+        let mut temp_count: usize = 0;
+        let mut mem_sum_mb: f64 = 0.0;
+        let mut any_mem_ok = false;
+        let mut mem_total_sum_mb: f64 = 0.0;
+        let mut any_mem_total_ok = false;
+        let mut compute_util_sum: f64 = 0.0;
+        let mut compute_util_count: usize = 0;
+        let mut memory_util_sum: f64 = 0.0;
+        let mut memory_util_count: usize = 0;
+
+        if let Ok(mut guard) = self.devices.lock() {
+            for (device_index, dev) in guard.iter_mut() {
+                // Prefer current socket power: it's supported on MI300X VFs
+                // even when other power telemetry calls are not.
+                let mut socket_power_uw: u64 = 0;
+                let power_status = unsafe {
+                    rocm_smi_lib::rsmi_dev_current_socket_power_get(
+                        *device_index,
+                        &mut socket_power_uw,
+                    )
+                };
+                if power_status == 0 {
+                    power_sum_w += socket_power_uw as f64 / MICROWATTS_PER_WATT;
+                    power_count += 1;
+                } else if let Ok(power) = dev.get_power_data() {
+                    // Fallback within ROCm SMI for older devices.
+                    power_sum_w += power.current_power as f64 / MICROWATTS_PER_WATT;
+                    power_count += 1;
+                }
+
+                if let Ok(temp) = dev.get_temperature_metric(
+                    RsmiTemperatureType::Junction,
+                    RsmiTemperatureMetric::Current,
+                ) {
+                    let t = if temp > 1000.0 { temp / 1000.0 } else { temp };
+                    temp_sum_c += t;
+                    temp_count += 1;
+                } else if let Ok(temp) = dev.get_temperature_metric(
+                    RsmiTemperatureType::Edge,
+                    RsmiTemperatureMetric::Current,
+                ) {
+                    let t = if temp > 1000.0 { temp / 1000.0 } else { temp };
+                    temp_sum_c += t;
+                    temp_count += 1;
+                }
+
+                if let Ok(mem) = dev.get_memory_data() {
+                    let used_mb = mem.vram_used as f64 / BYTES_PER_MIB;
+                    mem_sum_mb += used_mb;
+                    any_mem_ok = true;
+                    let total_mb = mem.vram_total as f64 / BYTES_PER_MIB;
+                    mem_total_sum_mb += total_mb;
+                    any_mem_total_ok = true;
+                }
+
+                // GPU utilization (compute)
+                let mut busy_pct: u32 = 0;
+                let status = unsafe {
+                    rocm_smi_lib::rsmi_dev_busy_percent_get(*device_index, &mut busy_pct)
+                };
+                if status == 0 {
+                    compute_util_sum += busy_pct as f64;
+                    compute_util_count += 1;
+                }
+
+                // Memory utilization (approx bandwidth utilization)
+                let mut mem_busy_pct: u32 = 0;
+                let status = unsafe {
+                    rocm_smi_lib::rsmi_dev_memory_busy_percent_get(*device_index, &mut mem_busy_pct)
+                };
+                if status == 0 {
+                    memory_util_sum += mem_busy_pct as f64;
+                    memory_util_count += 1;
+                }
+            }
+        }
+
+        if power_count == self.devices.lock().unwrap().len() {
+            sample.power_watts = power_sum_w;
+            let now = Instant::now();
+            let mut ts = self.last_timestamp.lock().unwrap();
+            if let Some(last) = *ts {
+                let dt = now.duration_since(last).as_secs_f64();
+                *self.accumulated_energy_j.lock().unwrap() += power_sum_w * dt;
+            }
+            *ts = Some(now);
+            sample.energy_joules = *self.accumulated_energy_j.lock().unwrap();
+        } else {
+            warn!("ROC-SMI returned incomplete AMD GPU power metrics");
+            return Err(anyhow::anyhow!(
+                "Incomplete AMD GPU power telemetry: {power_count} devices reported power"
+            ));
+        }
+
+        if temp_count > 0 {
+            sample.temperature_celsius = temp_sum_c / (temp_count as f64);
+        }
+
+        if any_mem_ok {
+            sample.gpu_memory_usage_mb = mem_sum_mb;
+        }
+        if any_mem_total_ok {
+            sample.gpu_memory_total_mb = mem_total_sum_mb;
+        }
+        if compute_util_count > 0 {
+            sample.gpu_compute_utilization_pct = compute_util_sum / (compute_util_count as f64);
+        }
+        if memory_util_count > 0 {
+            sample.gpu_memory_bandwidth_utilization_pct =
+                memory_util_sum / (memory_util_count as f64);
+        }
+
+        // Fill CPU energy using RAPL on Linux
+        #[cfg(target_os = "linux")]
+        {
+            if let Ok(mut rapl_guard) = self.rapl_reader.lock() {
+                if let Some(ref mut rapl) = *rapl_guard {
+                    if let Some(reading) = rapl.read() {
+                        sample.cpu_power_watts = reading.cpu_power_watts;
+                        sample.cpu_energy_joules = reading.cpu_energy_joules;
+                        if let Some((dram_power, dram_energy)) = reading.dram {
+                            sample.dram_power_watts = dram_power;
+                            sample.dram_energy_joules = dram_energy;
+                        }
+                    }
+                }
+            }
+        }
+
+        let mut sys = sysinfo::System::new_all();
+        sys.refresh_memory();
+        sample.cpu_memory_usage_mb = (sys.used_memory() as f64) / (1024.0 * 1024.0);
+
+        Ok(sample)
+    }
+}

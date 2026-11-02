@@ -1,0 +1,68 @@
+name: Public J2G code
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v4
+      - name: Install locked Python environment
+        run: uv sync --project intelligence-per-watt --locked --extra dev --extra openhands --extra deliverables --extra pairwise --extra analysis
+      - name: Smoke installed GDPVal CLI
+        run: |
+          uv run --project intelligence-per-watt --no-sync ipw --help
+          uv run --project intelligence-per-watt --no-sync ipw run --help
+      - name: Check public file inventory, secrets, shell scripts, and Markdown
+        run: uv run --project intelligence-per-watt --no-sync python scripts/check_public_release.py
+      - name: Smoke Joules to GDP calculations with fabricated inputs
+        run: uv run --project intelligence-per-watt --no-sync python reproduction/smoke_test.py
+      - name: Check Python syntax
+        run: uv run --project intelligence-per-watt --no-sync python -m compileall -q analysis cluster reproduction scripts intelligence-per-watt/src/ipw
+      - name: Check code style
+        run: uv run --project intelligence-per-watt --no-sync ruff check analysis cluster reproduction scripts intelligence-per-watt/src/ipw intelligence-per-watt/src/ipw/tests
+      - name: Run offline tests
+        run: uv run --project intelligence-per-watt --no-sync pytest intelligence-per-watt/src/ipw/tests -q -m "not integration and not stress"
+      - name: Check run contracts and fabricated launcher fixture
+        run: |
+          uv run --project intelligence-per-watt --no-sync python reproduction/test_release.py
+          uv run --project intelligence-per-watt --no-sync python analysis/test_active_request_energy.py
+          uv run --project intelligence-per-watt --no-sync pytest analysis/test_energy_boundary.py -q
+          uv run --project intelligence-per-watt --no-sync python reproduction/build_metrics.py --dry-run
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v4
+      - name: Test locked telemetry source
+        working-directory: energy-monitor
+        run: cargo test --locked
+      - name: Build and stage Linux telemetry service
+        run: |
+          python3 scripts/build_energy_monitor.py
+          test -x intelligence-per-watt/src/ipw/telemetry/bin/linux-x86_64/energy-monitor
+          intelligence-per-watt/src/ipw/telemetry/bin/linux-x86_64/energy-monitor --help
+      - name: Package and verify the Linux telemetry binary
+        run: |
+          uv build intelligence-per-watt --out-dir "$RUNNER_TEMP/ipw-dist"
+          python3 -c 'import glob, os, pathlib, zipfile; wheels=glob.glob(os.environ["RUNNER_TEMP"]+"/ipw-dist/*.whl"); assert len(wheels)==1, wheels; member="ipw/telemetry/bin/linux-x86_64/energy-monitor"; source=pathlib.Path("intelligence-per-watt/src")/member; archive=zipfile.ZipFile(wheels[0]); assert archive.read(member)==source.read_bytes(); assert archive.getinfo(member).external_attr >> 16 & 0o111, "wheel meter is not executable"'

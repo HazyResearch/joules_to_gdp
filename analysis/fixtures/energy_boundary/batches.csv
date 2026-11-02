@@ -1,0 +1,2 @@
+profile,batch_key,batch_role,batch_start_s,batch_end_s,gpu_energy_j,cpu_energy_j,dram_energy_j,source_path,source_sha256
+fixture,e0,primary,0,10,100,20,5,analysis/fixtures/energy_boundary/fabricated_meter.txt,526ed22d9c2b89232f02588b8dbff2fb521f0c61ced12ea55ab558a311b5f597
